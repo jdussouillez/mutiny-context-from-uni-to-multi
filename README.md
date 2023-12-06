@@ -2,7 +2,7 @@
 
 Project to reproduce a weird behavior with context propagation from an Uni to a Multi.
 
-TODO: add link here
+https://github.com/smallrye/smallrye-mutiny/discussions/1455
 
 ## Description
 
