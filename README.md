@@ -51,7 +51,6 @@ var results = fetch()
     .join();
 // "s2" value was in the context when the Multi completed: OK
 ```
-```
 
 But when I'm using `await` then my context is empty!
 
