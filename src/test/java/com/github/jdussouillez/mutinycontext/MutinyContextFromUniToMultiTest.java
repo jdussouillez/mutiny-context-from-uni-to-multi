@@ -42,7 +42,7 @@ class MutinyContextFromUniToMultiTest {
     private Multi<Integer> fetch() {
         return Uni.createFrom().item(1)
             .call(value1 -> Uni.createFrom().item(2)
-                // I need "value2" on my multi completion
+                // Store "value2 = 2" in context
                 .withContext((uniValue2, ctx) -> uniValue2.invoke(value2 -> ctx.put("value2", value2)))
             )
             .chain(value1 -> Uni.createFrom().item(3))
@@ -51,7 +51,9 @@ class MutinyContextFromUniToMultiTest {
             .withContext((multi, ctx) -> multi
                 .onCompletion()
                 .call(() -> {
+                    // If need "value2" here to do some stuff
                     contextAvailableInMulti.set(ctx.contains("value2"));
+                    // TODO: use "value2"
                     return Uni.createFrom().voidItem();
                 })
             );
