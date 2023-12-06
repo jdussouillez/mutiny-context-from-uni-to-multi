@@ -22,7 +22,7 @@ private Multi<String> fetch() {
         .withContext((multi, ctx) -> multi
             .onCompletion()
             .call(() -> {
-                // If need "step2" result here to do some stuff
+                // I need "step2" result here to do some stuff
                 contextAvailableInMulti.set(ctx.contains("s2")); // Check if the context has "step2" result
                 return Uni.createFrom().voidItem();
             })
