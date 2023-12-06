@@ -6,7 +6,7 @@ TODO: add link here
 
 ## Description
 
-I have a method that using an Uni and returning a Multi. But the twist is: I need some data when the multi is completed, and this data is accessible in the Uni, before I create the multi.
+I have a method that using an Uni and returning a Multi. But the twist is: I need some data when the Multi is completed, and this data is accessible in the Uni, before I create the Multi.
 So I'm using a [context](https://smallrye.io/smallrye-mutiny/2.5.1/guides/context-passing/) to store this data and get it back later.
 
 ```java
@@ -30,7 +30,7 @@ private Multi<String> fetch() {
 }
 ```
 
-## Problem
+## Actual behavior
 
 When I'm using a `subscribe` then everything works fine:
 
@@ -52,6 +52,10 @@ var values = fetch()
     .indefinitely();
 // "s2" value wasn't in the context when the Multi completed: Failure
 ```
+
+## Expected behavior
+
+I guess the context propagation should work the same way, whether we use `subscribe` or `await`, right?
 
 ## Run the tests
 
