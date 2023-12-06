@@ -41,6 +41,18 @@ class MutinyContextFromUniToMultiTest {
         assertTrue(contextAvailableInMulti.get()); // OK
     }
 
+    @Test
+    void testUniMultiContextSubscribeCollect() {
+        var results = fetch()
+            .collect()
+            .asList()
+            .subscribe()
+            .asCompletionStage()
+            .join();
+        assertEquals(VALUES, results);
+        assertTrue(contextAvailableInMulti.get()); // OK
+    }
+
     private Multi<String> fetch() {
         return step1()
             .call(step1Result -> step2()

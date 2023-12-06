@@ -35,17 +35,28 @@ private Multi<String> fetch() {
 When I'm using a `subscribe` then everything works fine:
 
 ```java
-var values = fetch()
+var results = fetch()
     .subscribe()
     .asStream()
     .toList();
 // "s2" value was in the context when the Multi completed: OK
 ```
 
+```java
+var results = fetch()
+    .collect()
+    .asList()
+    .subscribe()
+    .asCompletionStage()
+    .join();
+// "s2" value was in the context when the Multi completed: OK
+```
+```
+
 But when I'm using `await` then my context is empty!
 
 ```java
-var values = fetch()
+var results = fetch()
     .collect()
     .asList()
     .await()
@@ -67,5 +78,5 @@ Output:
 ```
 [ERROR] Failures: 
 [ERROR]   MutinyContextFromUniToMultiTest.testUniMultiContextAwait:31 expected: <true> but was: <false>
-[ERROR] Tests run: 2, Failures: 1, Errors: 0, Skipped: 0
+[ERROR] Tests run: 3, Failures: 1, Errors: 0, Skipped: 0
 ```
