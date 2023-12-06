@@ -27,6 +27,3 @@ target/
 
 # Maven wrapper
 !*/.mvn/wrapper/maven-wrapper.jar
-
-# Data
-db/server-data.sql
