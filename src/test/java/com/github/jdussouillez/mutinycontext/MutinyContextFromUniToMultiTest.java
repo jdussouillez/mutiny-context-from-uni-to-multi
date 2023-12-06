@@ -26,7 +26,7 @@ class MutinyContextFromUniToMultiTest {
             .await()
             .indefinitely();
         assertEquals(List.of(10, 20, 30), values);
-        assertTrue(contextAvailableInMulti.get());
+        assertTrue(contextAvailableInMulti.get()); // Failure!
     }
 
     @Test
@@ -36,7 +36,7 @@ class MutinyContextFromUniToMultiTest {
             .asStream()
             .toList();
         assertEquals(List.of(10, 20, 30), values);
-        assertTrue(contextAvailableInMulti.get());
+        assertTrue(contextAvailableInMulti.get()); // OK
     }
 
     private Multi<Integer> fetch() {
