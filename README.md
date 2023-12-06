@@ -6,7 +6,7 @@ TODO: add link here
 
 ## Description
 
-I have a method that using an Uni and returning a Multi. But the twist is: I need some data when the Multi is completed, and this data is accessible in the Uni, before I create the Multi.
+I have a method using an Uni and returning a Multi. But the twist is: I need some data when the Multi is completed, and this data is accessible in the Uni, before I create the Multi.
 So I'm using a [context](https://smallrye.io/smallrye-mutiny/2.5.1/guides/context-passing/) to store this data and get it back later.
 
 ```java
