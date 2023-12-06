@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test;
 
 class MutinyContextFromUniToMultiTest {
 
+    private static final List<String> VALUES = List.of("step 4.1", "step 4.2", "step 4.3");
+
     private AtomicBoolean contextAvailableInMulti;
 
     @BeforeEach
@@ -20,42 +22,57 @@ class MutinyContextFromUniToMultiTest {
 
     @Test
     void testUniMultiContextAwait() {
-        var values = fetch()
+        var results = fetch()
             .collect()
             .asList()
             .await()
             .indefinitely();
-        assertEquals(List.of(10, 20, 30), values);
+        assertEquals(VALUES, results);
         assertTrue(contextAvailableInMulti.get()); // Failure!
     }
 
     @Test
     void testUniMultiContextSubscribe() {
-        var values = fetch()
+        var results = fetch()
             .subscribe()
             .asStream()
             .toList();
-        assertEquals(List.of(10, 20, 30), values);
+        assertEquals(VALUES, results);
         assertTrue(contextAvailableInMulti.get()); // OK
     }
 
-    private Multi<Integer> fetch() {
-        return Uni.createFrom().item(1)
-            .call(value1 -> Uni.createFrom().item(2)
-                // Store "value2 = 2" in context
-                .withContext((uniValue2, ctx) -> uniValue2.invoke(value2 -> ctx.put("value2", value2)))
+    private Multi<String> fetch() {
+        return step1()
+            .call(step1Result -> step2()
+                // Store "step2" result in the context
+                .withContext((s2, ctx) -> s2.invoke(step2Result -> ctx.put("s2", step2Result)))
             )
-            .chain(value1 -> Uni.createFrom().item(3))
+            .chain(step1Result -> step3())
             .onItem()
-            .transformToMulti(value3 -> Multi.createFrom().items(10, 20, 30))
+            .transformToMulti(step3Result -> step4(step3Result))
             .withContext((multi, ctx) -> multi
                 .onCompletion()
                 .call(() -> {
-                    // If need "value2" here to do some stuff
-                    contextAvailableInMulti.set(ctx.contains("value2"));
-                    // TODO: use "value2"
+                    // If need "step2" result here to do some stuff
+                    contextAvailableInMulti.set(ctx.contains("s2")); // Check if the context has "step2" result
                     return Uni.createFrom().voidItem();
                 })
             );
+    }
+
+    private Uni<String> step1() {
+        return Uni.createFrom().item("step 1");
+    }
+
+    private Uni<String> step2() {
+        return Uni.createFrom().item("step 2");
+    }
+
+    private Uni<String> step3() {
+        return Uni.createFrom().item("step 3");
+    }
+
+    private Multi<String> step4(final String input) {
+        return Multi.createFrom().iterable(VALUES);
     }
 }

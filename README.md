@@ -10,22 +10,20 @@ I have a method that using an Uni and returning a Multi. But the twist is: I nee
 So I'm using a [context](https://smallrye.io/smallrye-mutiny/2.5.1/guides/context-passing/) to store this data and get it back later.
 
 ```java
-private Multi<Integer> fetch() {
-    return Uni.createFrom().item(1)
-        .call(value1 -> Uni.createFrom().item(2)
-            // Store "value2 = 2" in context
-            .withContext((uniValue2, ctx) -> uniValue2.invoke(value2 -> ctx.put("value2", value2)))
+private Multi<String> fetch() {
+    return step1()
+        .call(step1Result -> step2()
+            // Store "step2" result in the context
+            .withContext((s2, ctx) -> s2.invoke(step2Result -> ctx.put("s2", step2Result)))
         )
-        .chain(value1 -> Uni.createFrom().item(3))
+        .chain(step1Result -> step3())
         .onItem()
-        .transformToMulti(value3 -> Multi.createFrom().items(10, 20, 30))
+        .transformToMulti(step3Result -> step4(step3Result))
         .withContext((multi, ctx) -> multi
             .onCompletion()
             .call(() -> {
-                // If need "value2" here to do some stuff
-                contextAvailableInMulti.set(ctx.contains("value2"));
-                // TODO: use "value2"
-
+                // If need "step2" result here to do some stuff
+                contextAvailableInMulti.set(ctx.contains("s2")); // Check if the context has "step2" result
                 return Uni.createFrom().voidItem();
             })
         );
@@ -41,7 +39,7 @@ var values = fetch()
     .subscribe()
     .asStream()
     .toList();
-// "value2" was in the context when the Multi completed: OK
+// "s2" value was in the context when the Multi completed: OK
 ```
 
 But when I'm using `await` then my context is empty!
@@ -52,7 +50,7 @@ var values = fetch()
     .asList()
     .await()
     .indefinitely();
-// "value2" was not in the context the Multi completed: failure
+// "s2" value wasn't in the context when the Multi completed: Failure
 ```
 
 ## Run the tests
@@ -64,6 +62,6 @@ var values = fetch()
 Output:
 ```
 [ERROR] Failures: 
-[ERROR]   MutinyContextFromUniToMultiTest.testUniMultiContextAwait:29 expected: <true> but was: <false>
+[ERROR]   MutinyContextFromUniToMultiTest.testUniMultiContextAwait:31 expected: <true> but was: <false>
 [ERROR] Tests run: 2, Failures: 1, Errors: 0, Skipped: 0
 ```
