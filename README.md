@@ -54,3 +54,16 @@ var values = fetch()
     .indefinitely();
 // "value2" was not in the context the Multi completed: failure
 ```
+
+## Run the tests
+
+```sh
+./mvnw test
+```
+
+Output:
+```
+[ERROR] Failures: 
+[ERROR]   MutinyContextFromUniToMultiTest.testUniMultiContextAwait:29 expected: <true> but was: <false>
+[ERROR] Tests run: 2, Failures: 1, Errors: 0, Skipped: 0
+```
