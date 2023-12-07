@@ -1,5 +1,6 @@
 package com.github.jdussouillez.mutinycontext;
 
+import io.smallrye.mutiny.Context;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import java.util.List;
@@ -29,6 +30,30 @@ class MutinyContextFromUniToMultiTest {
             .indefinitely();
         assertEquals(VALUES, results);
         assertTrue(contextAvailableInMulti.get()); // Failure!
+    }
+
+    @Test
+    void testUniMultiContextAwaitWithContextEmpty() {
+        var results = fetch()
+            .collect()
+            .asList()
+            // See https://github.com/smallrye/smallrye-mutiny/discussions/1455#discussioncomment-7779184
+            .awaitUsing(Context.empty())
+            .indefinitely();
+        assertEquals(VALUES, results);
+        assertTrue(contextAvailableInMulti.get()); // OK
+    }
+
+    @Test
+    void testUniMultiContextAwaitWithContextOf() {
+        var results = fetch()
+            .collect()
+            .asList()
+            // See https://github.com/smallrye/smallrye-mutiny/discussions/1455#discussioncomment-7779184
+            .awaitUsing(Context.of())
+            .indefinitely();
+        assertEquals(VALUES, results);
+        assertTrue(contextAvailableInMulti.get()); // OK
     }
 
     @Test
