@@ -4,6 +4,8 @@ Project to reproduce a weird behavior with context propagation from an Uni to a 
 
 https://github.com/smallrye/smallrye-mutiny/discussions/1455
 
+**Edit**: fixed in Mutiny [v2.5.2](https://github.com/smallrye/smallrye-mutiny/releases/tag/2.5.2): https://github.com/smallrye/smallrye-mutiny/pull/1458
+
 ## Description
 
 I have a method using an Uni and returning a Multi. But the twist is: I need some data when the Multi is completed, and this data is accessible in the Uni, before I create the Multi.
